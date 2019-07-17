@@ -3,7 +3,6 @@ variable "enable" {
 }
 variable "function_name" {}
 variable "source_files" {}
-variable "aws_iam_role" {}
 variable "runtime" {
   default = python2.7
 }
