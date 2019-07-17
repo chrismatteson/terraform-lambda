@@ -12,5 +12,9 @@ variable "timeout" {
 variable "memory_size" {
   default = 128
 }
-variable "tags" {}
-variable "environment_variables" {}
+variable "tags" {
+  default = {}
+}
+variable "environment_variables" {
+  default = {}
+}
