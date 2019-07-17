@@ -12,6 +12,7 @@ data "archive_file" "lambda" {
 }
 
 resource "aws_lambda_function" "vault_lambda" {
+  count            = var.enable ? 1 : 0
   filename         = data.archive_file.lambda.output_path
   function_name    = var.function_name
   role             = var.aws_iam_role
