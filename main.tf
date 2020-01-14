@@ -1,3 +1,8 @@
+data "local_file" "lambda" {
+  count    = length(var.source_files)
+  filename = element(var.source_files, count.index).filename
+}
+
 data "archive_file" "lambda" {
   type        = "zip"
   output_path = "${path.module}/lambda.zip"
@@ -5,14 +10,14 @@ data "archive_file" "lambda" {
   dynamic "source" {
     for_each = var.source_files
     content {
-      filename = subnet.key
-      content  = subnet.value
+      filename = source.value["filename"]
+      content  = data.local_file.lambda[index(data.local_file.lambda.*.filename, source.value["filename"])].content
     }
   }
 }
 
 resource "aws_iam_role" "iam_for_lambda" {
-  name = "${random_id.project_name.hex}-iam_for_lambda"
+  name = "${var.function_name}-iam_for_lambda"
 
   assume_role_policy = <<EOF
 {
@@ -37,16 +42,13 @@ resource "aws_lambda_function" "vault_lambda" {
   function_name    = var.function_name
   role             = aws_iam_role.iam_for_lambda.arn
   handler          = "lambda_function.lambda_handler"
-  source_code_hash = "${base64sha256(file("${data.archive_file.lambda.output_path}"))}"
+  source_code_hash = filebase64sha256("${data.archive_file.lambda.output_path}")
   runtime          = var.runtime
   timeout          = var.timeout
   memory_size      = var.memory_size
   tags             = var.tags
 
   environment {
-    variables = {
-      for key in var.environment_variables :
-      key => key.value
-    }
+    variables = var.environment_variables
   }
 }
