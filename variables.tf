@@ -21,3 +21,7 @@ variable "environment_variables" {
   type    = map(string)
   default = {}
 }
+variable "handler" {
+  type = string
+  default = "lambda_function.lambda_handler"
+}
