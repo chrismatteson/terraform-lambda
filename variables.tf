@@ -22,6 +22,10 @@ variable "environment_variables" {
   default = {}
 }
 variable "handler" {
-  type = string
+  type    = string
   default = "lambda_function.lambda_handler"
+}
+variable "vpc_config" {
+  type    = map(string)
+  default = {}
 }
