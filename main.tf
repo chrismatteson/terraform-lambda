@@ -36,6 +36,31 @@ resource "aws_iam_role" "iam_for_lambda" {
 EOF
 }
 
+resource "aws_iam_role_policy_attachment" "BasicExecutation" {
+  role = aws_iam_role.iam_for_lambda.id
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+# This should be restricted to just the permissions it needs. Something like:
+# formatlist("arn:aws:ec2:*:*:subnet/%s", module.vpc.public_subnets)
+data "aws_iam_policy_document" "vpc_config" {
+  statement {
+    actions = [
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:CreateNetworkInterface",
+      "ec2:DeleteNetworkInterface"
+    ]
+    resources = ["*"]
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_role_policy" "vpc_config" {
+  name = "${var.function_name}-iam_for_vpc_config"
+  role = aws_iam_role.iam_for_lambda.id
+  policy = data.aws_iam_policy_document.vpc_config.json
+}
+
 resource "aws_lambda_function" "vault_lambda" {
   count            = var.enable ? 1 : 0
   filename         = data.archive_file.lambda.output_path
