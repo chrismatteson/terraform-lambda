@@ -47,7 +47,10 @@ resource "aws_lambda_function" "vault_lambda" {
   timeout          = var.timeout
   memory_size      = var.memory_size
   tags             = var.tags
-  vpc_config       = var.vpc_config
+  vpc_config {
+    subnet_ids = var.subnet_ids
+    security_group_ids = var.security_group_ids
+   }
 
   environment {
     variables = var.environment_variables

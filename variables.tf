@@ -25,7 +25,11 @@ variable "handler" {
   type    = string
   default = "lambda_function.lambda_handler"
 }
-variable "vpc_config" {
-  type    = map(string)
-  default = {}
+variable "subnet_ids" {
+  type = list
+  default = []
+}
+variable "security_group_ids" {
+  type = list
+  default = []
 }
