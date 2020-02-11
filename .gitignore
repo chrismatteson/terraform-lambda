@@ -7,3 +7,7 @@
 
 # .tfvars files
 *.tfvars
+
+# Files for testing
+*.zip
+*.py

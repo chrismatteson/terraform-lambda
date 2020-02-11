@@ -3,9 +3,9 @@ output "aws_iam_role" {
 }
 
 output "arn" {
-  value = aws_lambda_function.vault_lambda[0].arn
+  value = length(aws_lambda_function.vault_lambda) > 0 ? aws_lambda_function.vault_lambda[0].arn : "Lambda not created"
 }
 
 output "invoke_arn" {
-  value = aws_lambda_function.vault_lambda[0].invoke_arn
+  value = length(aws_lambda_function.vault_lambda) > 0 ? aws_lambda_function.vault_lambda[0].invoke_arn : "Lambda not created"
 }
